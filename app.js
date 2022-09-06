@@ -42,7 +42,7 @@ async function cacheData(req, res, next) {
     res.status(404);
   }
 }
-async function getSpeciesData(req, res) {
+const getSpeciesData = async (req, res) => {
   const species = req.params.species;
   let results;
 
@@ -64,7 +64,7 @@ async function getSpeciesData(req, res) {
     console.error(error);
     res.status(404).send("Data unavailable");
   }
-}
+};
 
 app.get("/fish/:species", cacheData, getSpeciesData);
 
