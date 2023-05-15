@@ -15,19 +15,19 @@ let redisClient;
   await redisClient.connect();
 })();
 
-async function fetchApiData(species) {
+async function fetchApiData(id) {
   const apiResponse = await axios.get(
-    `https://www.fishwatch.gov/api/species/${species}`
+    `https://jsonplaceholder.typicode.com/posts/${id}`
   );
   console.log("Request sent to the API");
   return apiResponse.data;
 }
 
 async function cacheData(req, res, next) {
-  const species = req.params.species;
+  const post = req.params.id;
   let results;
   try {
-    const cacheResults = await redisClient.get(species);
+    const cacheResults = await redisClient.get(post);
     if (cacheResults) {
       results = JSON.parse(cacheResults);
       res.send({
@@ -42,16 +42,16 @@ async function cacheData(req, res, next) {
     res.status(404);
   }
 }
-const getSpeciesData = async (req, res) => {
-  const species = req.params.species;
+const getPostData = async (req, res) => {
+  const id = req.params.id;
   let results;
 
   try {
-    results = await fetchApiData(species);
+    results = await fetchApiData(id);
     if (results.length === 0) {
       throw "API returned an empty array";
     }
-    await redisClient.set(species, JSON.stringify(results), {
+    await redisClient.set(id, JSON.stringify(results), {
       EX: 60,
       NX: true,
     });
@@ -66,7 +66,7 @@ const getSpeciesData = async (req, res) => {
   }
 };
 
-app.get("/fish/:species", cacheData, getSpeciesData);
+app.get("/post/:id", cacheData, getPostData);
 
 app.listen(port, () => {
   console.log(`App listening on port ${port}`);

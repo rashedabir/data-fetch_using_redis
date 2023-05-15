@@ -6,7 +6,7 @@
   "scripts": {
     "start": "nodemon app.js"
   },
-  "author": "Musabbir Mamun",
+  "author": "Rashed Khan",
   "license": "ISC",
   "dependencies": {
     "axios": "^0.27.2",
